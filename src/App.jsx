@@ -1,431 +1,163 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  Search, 
-  ExternalLink, 
-  Globe, 
-  Shield, 
-  User, 
-  Map, 
-  Image as ImageIcon, 
-  Database, 
-  Camera, 
-  MessageSquare, 
-  Activity, 
-  Briefcase, 
-  Lock, 
-  Cpu, 
-  FileText, 
-  ChevronRight,
-  Menu,
-  X,
-  BookOpen,
-  Anchor,
-  Cloud,
-  CheckCircle,
-  Zap,
-  Sparkles,
-  Loader2,
-  Terminal,
-  Send,
-  Sun,
-  Moon,
-  Languages,
-  Star,
-  StarOff,
-  Download,
-  Filter,
-  TrendingUp,
-  Eye,
-  Compass,
-  Target,
-  Settings,
-  History,
-  Presentation,
-  Keyboard,
-  Heart
-} from 'lucide-react';
+import React, { useState, useMemo, useEffect, Suspense, lazy, memo, useCallback } from 'react';
+// Optimized imports - only load needed icons
+import Search from 'lucide-react/dist/esm/icons/search';
+import ExternalLink from 'lucide-react/dist/esm/icons/external-link';
+import Globe from 'lucide-react/dist/esm/icons/globe';
+import Shield from 'lucide-react/dist/esm/icons/shield';
+import User from 'lucide-react/dist/esm/icons/user';
+import Map from 'lucide-react/dist/esm/icons/map';
+import ImageIcon from 'lucide-react/dist/esm/icons/image';
+import Database from 'lucide-react/dist/esm/icons/database';
+import Camera from 'lucide-react/dist/esm/icons/camera';
+import MessageSquare from 'lucide-react/dist/esm/icons/message-square';
+import Activity from 'lucide-react/dist/esm/icons/activity';
+import Briefcase from 'lucide-react/dist/esm/icons/briefcase';
+import Lock from 'lucide-react/dist/esm/icons/lock';
+import Cpu from 'lucide-react/dist/esm/icons/cpu';
+import FileText from 'lucide-react/dist/esm/icons/file-text';
+import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
+import Menu from 'lucide-react/dist/esm/icons/menu';
+import X from 'lucide-react/dist/esm/icons/x';
+import BookOpen from 'lucide-react/dist/esm/icons/book-open';
+import Anchor from 'lucide-react/dist/esm/icons/anchor';
+import Cloud from 'lucide-react/dist/esm/icons/cloud';
+import CheckCircle from 'lucide-react/dist/esm/icons/check-circle';
+import Zap from 'lucide-react/dist/esm/icons/zap';
+import Sparkles from 'lucide-react/dist/esm/icons/sparkles';
+import Loader2 from 'lucide-react/dist/esm/icons/loader-2';
+import Terminal from 'lucide-react/dist/esm/icons/terminal';
+import Send from 'lucide-react/dist/esm/icons/send';
+import Sun from 'lucide-react/dist/esm/icons/sun';
+import Moon from 'lucide-react/dist/esm/icons/moon';
+import Languages from 'lucide-react/dist/esm/icons/languages';
+import Star from 'lucide-react/dist/esm/icons/star';
+import StarOff from 'lucide-react/dist/esm/icons/star-off';
+import Download from 'lucide-react/dist/esm/icons/download';
+import Filter from 'lucide-react/dist/esm/icons/filter';
+import TrendingUp from 'lucide-react/dist/esm/icons/trending-up';
+import Eye from 'lucide-react/dist/esm/icons/eye';
+import Compass from 'lucide-react/dist/esm/icons/compass';
+import Target from 'lucide-react/dist/esm/icons/target';
+import Settings from 'lucide-react/dist/esm/icons/settings';
+import History from 'lucide-react/dist/esm/icons/history';
+import Presentation from 'lucide-react/dist/esm/icons/presentation';
+import Keyboard from 'lucide-react/dist/esm/icons/keyboard';
+import Heart from 'lucide-react/dist/esm/icons/heart';
 import { useLanguage } from './i18n/LanguageContext';
-import { ExportTools } from './components/ExportTools';
-import { SearchHistory } from './components/SearchHistory';
 
-const OSINT_DATA = [
-  {
-    category: "searchEngines",
-    icon: <Search className="w-5 h-5" />,
-    color: "from-blue-500 to-cyan-500",
-    items: [
-      { 
-        name: "Google", 
-        url: "https://www.google.com/", 
-        descKey: "google",
-        tags: ["general", "popular", "worldwide"] 
-      },
-      { 
-        name: "Google Advanced Search", 
-        url: "https://www.google.com/advanced_search", 
-        descKey: "googleAdvanced",
-        tags: ["advanced", "filters", "precise"] 
-      },
-      { 
-        name: "Google Hacking Database", 
-        url: "https://www.exploit-db.com/google-hacking-database", 
-        descKey: "googleHacking",
-        tags: ["security", "dorks", "vulnerabilities"] 
-      },
-      { 
-        name: "Bing", 
-        url: "https://www.bing.com/", 
-        descKey: "bing",
-        tags: ["microsoft", "alternative", "images"] 
-      },
-      { 
-        name: "Yandex", 
-        url: "https://yandex.com/", 
-        descKey: "yandex",
-        tags: ["russia", "cyrillic", "regional"] 
-      },
-      { 
-        name: "Baidu", 
-        url: "https://www.baidu.com/", 
-        descKey: "baidu",
-        tags: ["china", "chinese", "regional"] 
-      },
-      { 
-        name: "DuckDuckGo", 
-        url: "https://duckduckgo.com/", 
-        descKey: "duckduckgo",
-        tags: ["privacy", "anonymous", "no-tracking"] 
-      },
-      { 
-        name: "Startpage", 
-        url: "https://www.startpage.com/", 
-        descKey: "startpage",
-        tags: ["privacy", "google-proxy", "anonymous"] 
-      }
-    ]
-  },
-  {
-    category: "socialMedia",
-    icon: <MessageSquare className="w-5 h-5" />,
-    color: "from-pink-500 to-rose-500",
-    items: [
-      { 
-        name: "Twitonomy", 
-        url: "https://www.twitonomy.com/", 
-        descKey: "twitonomy",
-        tags: ["twitter", "analytics", "statistics"] 
-      },
-      { 
-        name: "Bot Sentinel", 
-        url: "https://botsentinel.com/", 
-        descKey: "botSentinel",
-        tags: ["bots", "automation", "detection"] 
-      },
-      { 
-        name: "Wayback Tweets", 
-        url: "https://waybacktweets.streamlit.app/", 
-        descKey: "waybackTweets",
-        tags: ["archive", "deleted", "history"] 
-      },
-      { 
-        name: "Instagram Explorer", 
-        url: "https://www.osintcombine.com/free-osint-tools/instagram-explorer", 
-        descKey: "instagramExplorer",
-        tags: ["instagram", "profiles", "analysis"] 
-      },
-      { 
-        name: "Picuki", 
-        url: "https://www.picuki.com/", 
-        descKey: "picuki",
-        tags: ["instagram", "viewer", "anonymous"] 
-      },
-      { 
-        name: "TikTok Quick Search", 
-        url: "https://www.osintcombine.com/free-osint-tools/tiktok-quick-search", 
-        descKey: "tiktokSearch",
-        tags: ["tiktok", "videos", "search"] 
-      },
-      { 
-        name: "Telegago", 
-        url: "https://cse.google.com/cse?&cx=006368593537057042503:efxu7xprihg", 
-        descKey: "telegago",
-        tags: ["telegram", "channels", "search"] 
-      },
-      { 
-        name: "Graph.tips", 
-        url: "http://graph.tips/beta/", 
-        descKey: "graphTips",
-        tags: ["facebook", "search", "filters"] 
-      }
-    ]
-  },
-  {
-    category: "personSearch",
-    icon: <User className="w-5 h-5" />,
-    color: "from-purple-500 to-indigo-500",
-    items: [
-      { 
-        name: "Email Reputation", 
-        url: "https://emailrep.io/", 
-        descKey: "emailRep",
-        tags: ["email", "validation", "reputation"] 
-      },
-      { 
-        name: "Epieos Tools", 
-        url: "https://tools.epieos.com/google-account.php", 
-        descKey: "epieos",
-        tags: ["gmail", "google", "accounts"] 
-      },
-      { 
-        name: "Hunter.io", 
-        url: "https://hunter.io/", 
-        descKey: "hunter",
-        tags: ["email", "finder", "business"] 
-      },
-      { 
-        name: "Instant Username", 
-        url: "https://instantusername.com/", 
-        descKey: "instantUsername",
-        tags: ["username", "social", "availability"] 
-      },
-      { 
-        name: "WhatsMyName", 
-        url: "https://whatsmyname.app/", 
-        descKey: "whatsmyname",
-        tags: ["username", "comprehensive", "platforms"] 
-      },
-      { 
-        name: "Have I Been Pwned", 
-        url: "https://haveibeenpwned.com/", 
-        descKey: "haveibeenpwned",
-        tags: ["breach", "security", "passwords"] 
-      },
-      { 
-        name: "Pipl", 
-        url: "https://pipl.com/", 
-        descKey: "pipl",
-        tags: ["people", "global", "deep-web"] 
-      },
-      { 
-        name: "ThatsThem", 
-        url: "https://thatsthem.com/people-search", 
-        descKey: "thatsthem",
-        tags: ["reverse", "phone", "address"] 
-      }
-    ]
-  },
-  {
-    category: "imageMapping",
-    icon: <Map className="w-5 h-5" />,
-    color: "from-emerald-500 to-teal-500",
-    items: [
-      { 
-        name: "Tineye", 
-        url: "https://tineye.com/", 
-        descKey: "tineye",
-        tags: ["reverse", "image", "search"] 
-      },
-      { 
-        name: "FaceCheck.id", 
-        url: "https://facecheck.id/", 
-        descKey: "facecheck",
-        tags: ["face", "recognition", "ai"] 
-      },
-      { 
-        name: "Suncalc", 
-        url: "https://www.suncalc.org/", 
-        descKey: "suncalc",
-        tags: ["geolocation", "shadow", "time"] 
-      },
-      { 
-        name: "FotoForensics", 
-        url: "https://fotoforensics.com/", 
-        descKey: "fotoforensics",
-        tags: ["metadata", "forensics", "analysis"] 
-      },
-      { 
-        name: "Dual Maps", 
-        url: "https://www.mapchannels.com/DualMaps.aspx", 
-        descKey: "dualmaps",
-        tags: ["streetview", "comparison", "maps"] 
-      },
-      { 
-        name: "Zoom Earth", 
-        url: "https://zoom.earth/", 
-        descKey: "zoomearth",
-        tags: ["satellite", "weather", "live"] 
-      },
-      { 
-        name: "PeakFinder", 
-        url: "https://www.peakfinder.org/", 
-        descKey: "peakfinder",
-        tags: ["mountains", "geography", "identification"] 
-      }
-    ]
-  },
-  {
-    category: "corporateTech",
-    icon: <Briefcase className="w-5 h-5" />,
-    color: "from-orange-500 to-red-500",
-    items: [
-      { 
-        name: "OpenCorporates", 
-        url: "https://opencorporates.com/", 
-        descKey: "opencorporates",
-        tags: ["companies", "corporate", "database"] 
-      },
-      { 
-        name: "ICIJ Offshore Leaks", 
-        url: "http://offshoreleaks.icij.org/", 
-        descKey: "offshoreleaks",
-        tags: ["panama-papers", "offshore", "financial"] 
-      },
-      { 
-        name: "BuiltWith", 
-        url: "https://builtwith.com/", 
-        descKey: "builtwith",
-        tags: ["technology", "stack", "website"] 
-      },
-      { 
-        name: "Urlscan.io", 
-        url: "https://urlscan.io/", 
-        descKey: "urlscan",
-        tags: ["url", "analysis", "security"] 
-      },
-      { 
-        name: "DNS Dumpster", 
-        url: "https://dnsdumpster.com/", 
-        descKey: "dnsdumpster",
-        tags: ["dns", "domain", "infrastructure"] 
-      },
-      { 
-        name: "CyberChef", 
-        url: "https://gchq.github.io/CyberChef/", 
-        descKey: "cyberchef",
-        tags: ["encoding", "decoding", "analysis"] 
-      }
-    ]
-  },
-  {
-    category: "transportLive",
-    icon: <Activity className="w-5 h-5" />,
-    color: "from-yellow-500 to-amber-500",
-    items: [
-      { 
-        name: "MarineTraffic", 
-        url: "https://www.marinetraffic.com/", 
-        descKey: "marinetraffic",
-        tags: ["ships", "maritime", "tracking"] 
-      },
-      { 
-        name: "RadarBox", 
-        url: "https://www.radarbox24.com/", 
-        descKey: "radarbox",
-        tags: ["flights", "aircraft", "live"] 
-      },
-      { 
-        name: "OpenRailwayMap", 
-        url: "https://www.openrailwaymap.org/", 
-        descKey: "openrailway",
-        tags: ["railway", "trains", "infrastructure"] 
-      },
-      { 
-        name: "Broadcastify", 
-        url: "https://www.broadcastify.com/listen/", 
-        descKey: "broadcastify",
-        tags: ["radio", "scanner", "emergency"] 
-      },
-      { 
-        name: "Windy", 
-        url: "https://www.windy.com/", 
-        descKey: "windy",
-        tags: ["weather", "webcams", "live"] 
-      }
-    ]
-  },
-  {
-    category: "artificialIntelligence",
-    icon: <Cpu className="w-5 h-5" />,
-    color: "from-violet-500 to-purple-500",
-    items: [
-      { 
-        name: "ChatGPT", 
-        url: "https://chatgpt.com/", 
-        descKey: "chatgpt",
-        tags: ["openai", "language", "assistant"] 
-      },
-      { 
-        name: "Gemini", 
-        url: "https://gemini.google.com/", 
-        descKey: "gemini",
-        tags: ["google", "multimodal", "ai"] 
-      },
-      { 
-        name: "Claude", 
-        url: "https://claude.ai/", 
-        descKey: "claude",
-        tags: ["anthropic", "helpful", "harmless"] 
-      },
-      { 
-        name: "Consensus", 
-        url: "https://consensus.app/", 
-        descKey: "consensus",
-        tags: ["research", "papers", "scientific"] 
-      },
-      { 
-        name: "Undetectable AI", 
-        url: "https://undetectable.ai/", 
-        descKey: "undetectable",
-        tags: ["detection", "humanizer", "bypass"] 
-      }
-    ]
-  },
-  {
-    category: "verificationBlogs",
-    icon: <CheckCircle className="w-5 h-5" />,
-    color: "from-green-500 to-emerald-500",
-    items: [
-      { 
-        name: "Bellingcat", 
-        url: "https://www.bellingcat.com/", 
-        descKey: "bellingcat",
-        tags: ["journalism", "investigation", "verification"] 
-      },
-      { 
-        name: "Snopes", 
-        url: "https://www.snopes.com/", 
-        descKey: "snopes",
-        tags: ["fact-check", "debunking", "rumors"] 
-      },
-      { 
-        name: "OSINT Framework", 
-        url: "https://osintframework.com/", 
-        descKey: "osintframework",
-        tags: ["directory", "comprehensive", "tools"] 
-      },
-      { 
-        name: "IntelTechniques", 
-        url: "https://inteltechniques.com/", 
-        descKey: "inteltechniques",
-        tags: ["michael-bazzell", "methods", "training"] 
-      },
-      { 
-        name: "Sector035", 
-        url: "https://sector035.nl/", 
-        descKey: "sector035",
-        tags: ["weekly", "blog", "updates"] 
-      }
-    ]
-  }
-];
+// Lazy load heavy components and data
+const ExportTools = lazy(() => import('./components/ExportTools').then(m => ({ default: m.ExportTools })));
+const SearchHistory = lazy(() => import('./components/SearchHistory').then(m => ({ default: m.SearchHistory })));
+const OSINTData = lazy(() => import('./data/osint-data').then(m => ({ default: () => m.OSINT_DATA })));
+
+// Loading component for Suspense
+const LoadingSpinner = memo(({ text = "Cargando..." }) => (
+  <div className="flex items-center justify-center py-8">
+    <Loader2 className="w-6 h-6 animate-spin text-osint-500 mr-3" />
+    <span className="text-slate-500">{text}</span>
+  </div>
+));
+
+// Memoized tool card component to prevent unnecessary re-renders
+const ToolCard = memo(({ item, favorites, onToggleFavorite, theme, t }) => {
+  const isFavorite = favorites.some(f => f.url === item.url);
+  
+  const handleToggleFavorite = useCallback((e) => {
+    e.preventDefault();
+    onToggleFavorite(item);
+  }, [item, onToggleFavorite]);
+  
+  return (
+    <div className={`group relative p-6 rounded-2xl border transition-all duration-300 card-hover backdrop-blur-sm ${theme.card} hover:border-osint-500/40 hover:shadow-xl hover:shadow-osint-500/5`}>
+      <div className="flex justify-between items-start mb-4">
+        <div className="flex-1 min-w-0">
+          <h3 className={`font-semibold transition-colors truncate pr-4 text-lg ${theme.textMain} group-hover:text-osint-500`}>
+            {item.name}
+          </h3>
+          <div className="flex flex-wrap gap-1 mt-2">
+            {item.tags.slice(0, 3).map(tag => (
+              <span key={tag} className="text-xs px-2 py-1 rounded-full bg-osint-500/10 text-osint-600">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={handleToggleFavorite}
+            className={`p-2 rounded-lg transition-all hover:scale-110 ${isFavorite ? 'text-pink-500 hover:text-pink-400' : 'text-slate-400 hover:text-pink-500'}`}
+          >
+            {isFavorite ? <Star className="w-4 h-4 fill-current" /> : <StarOff className="w-4 h-4" />}
+          </button>
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`p-2 rounded-lg transition-all hover:scale-110 ${theme.textSub} hover:text-osint-500`}
+          >
+            <ExternalLink className="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+      <p className={`text-sm line-clamp-2 leading-relaxed ${theme.textSub}`}>
+        {t(`tools.${item.descKey}`)}
+      </p>
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-osint-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+    </div>
+  );
+});
+
+// Memoized category section
+const CategorySection = memo(({ category, theme, t }) => (
+  <div className="mb-8 animate-fade-in">
+    <div className="flex items-center gap-3 mb-6">
+      <div className={`p-3 rounded-xl bg-gradient-to-r ${category.color} shadow-lg`}>
+        {category.icon}
+      </div>
+      <div>
+        <h2 className={`text-2xl font-bold ${theme.textMain}`}>
+          {t(`categories.${category.category}`)}
+        </h2>
+        <p className={`text-sm ${theme.textSub}`}>
+          {category.items.length} herramientas disponibles
+        </p>
+      </div>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {category.items.map((item, idx) => (
+        <ToolCard 
+          key={`${item.url}-${idx}`}
+          item={item}
+          favorites={[]}
+          onToggleFavorite={() => {}}
+          theme={theme}
+          t={t}
+        />
+      ))}
+    </div>
+  </div>
+));
 
 export default function App() {
   const { t, currentLanguage, changeLanguage, availableLanguages } = useLanguage();
   
+  // Lazy load OSINT_DATA
+  const [osintData, setOsintData] = useState(null);
+  
+  // Load OSINT data on mount
+  useEffect(() => {
+    import('./data/osint-data').then(module => {
+      setOsintData(module.OSINT_DATA);
+    });
+  }, []);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('osint-hub-theme');
+    return saved ? saved === 'dark' : true;
+  });
   const [favorites, setFavorites] = useState(() => {
     const saved = localStorage.getItem('osint-hub-favorites');
     return saved ? JSON.parse(saved) : [];
@@ -446,15 +178,17 @@ export default function App() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiMode, setAiMode] = useState("plan"); // 'plan' or 'dork'
 
-  // Toggle favorites
-  const toggleFavorite = (tool) => {
-    const newFavorites = favorites.find(f => f.url === tool.url)
-      ? favorites.filter(f => f.url !== tool.url)
-      : [...favorites, tool];
-    
-    setFavorites(newFavorites);
-    localStorage.setItem('osint-hub-favorites', JSON.stringify(newFavorites));
-  };
+  // Optimized toggle favorites with useCallback
+  const toggleFavorite = useCallback((tool) => {
+    setFavorites(prevFavorites => {
+      const newFavorites = prevFavorites.find(f => f.url === tool.url)
+        ? prevFavorites.filter(f => f.url !== tool.url)
+        : [...prevFavorites, tool];
+      
+      localStorage.setItem('osint-hub-favorites', JSON.stringify(newFavorites));
+      return newFavorites;
+    });
+  }, []);
 
   // Search history management
   const addToSearchHistory = (query, results) => {
@@ -599,7 +333,9 @@ export default function App() {
   };
 
   const filteredData = useMemo(() => {
-    let results = OSINT_DATA;
+    if (!osintData) return [];
+    
+    let results = osintData;
     
     // Show only favorites if in favorites view
     if (showFavorites) {
@@ -630,9 +366,12 @@ export default function App() {
       }
     }
     return results;
-  }, [searchQuery, activeCategory, t, showFavorites, favorites]);
+  }, [searchQuery, activeCategory, t, showFavorites, favorites, osintData]);
 
-  const categories = ["all", ...OSINT_DATA.map(c => c.category)];
+  const categories = useMemo(() => {
+    if (!osintData) return ["all"];
+    return ["all", ...osintData.map(c => c.category)];
+  }, [osintData]);
 
   // Theme colors - More organic and warm
   const theme = {
@@ -716,7 +455,7 @@ export default function App() {
                 {t('nav.categories')}
               </p>
               {categories.map((cat) => {
-                const categoryData = OSINT_DATA.find(d => d.category === cat);
+                const categoryData = osintData?.find(d => d.category === cat);
                 const isActive = !isAiActive && activeCategory === cat;
                 
                 return (

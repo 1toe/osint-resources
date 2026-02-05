@@ -1,5 +1,7 @@
 import React from 'react';
-import { Clock, Trash2, Search } from 'lucide-react';
+import Clock from 'lucide-react/dist/esm/icons/clock';
+import Trash2 from 'lucide-react/dist/esm/icons/trash-2';
+import Search from 'lucide-react/dist/esm/icons/search';
 
 export const SearchHistory = ({ history, onClearHistory, onSearchFromHistory, isDarkMode }) => {
   if (history.length === 0) {
