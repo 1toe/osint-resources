@@ -1,0 +1,50 @@
+---
+Definir una estrategia de navegación clara para la aplicación.
+
+Evaluar navegación centralizada vs distribuida
+
+Establecer convenciones para definición de rutas
+
+Evitar acoplamiento entre navegación y lógica de dominio
+
+Documentar la estrategia para futuras extensiones
+---
+Diseñar y estructurar la base de rutas de la aplicación.
+
+Definir rutas principales y rutas dinámicas
+
+Establecer parámetros de rutas y convenciones de nombres
+
+Preparar la estructura para crecimiento a largo plazo
+
+Documentar el esquema de rutas
+---
+Implementar carga diferida de vistas para optimizar performance.
+
+Reducir el bundle inicial
+
+Cargar vistas bajo demanda según navegación
+
+Definir estados de loading durante la carga de vistas
+
+Evitar bloqueos de UI durante navegación
+---
+Implementar manejo de estados de error y loading asociados a la navegación.
+
+Mostrar feedback claro al usuario durante cargas
+
+Manejar errores de rutas inexistentes o fallidas
+
+Evitar estados inconsistentes entre URL y vista
+
+Centralizar manejo de errores de navegación
+---
+Asegurar sincronización correcta entre el estado de la aplicación y la URL.
+
+Reflejar el estado de la vista actual en la URL
+
+Permitir navegación directa sin inconsistencias
+
+Preparar la base para deep linking y enlaces compartibles
+
+Evitar duplicación de estado entre URL y store interno
