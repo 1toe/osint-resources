@@ -423,10 +423,23 @@ const VeriSource_DATA = [
 export default function App() {
   const { t, currentLanguage, changeLanguage, availableLanguages } = useLanguage();
   
+  // Lazy load OSINT_DATA
+  const [osintData, setOsintData] = useState(null);
+  
+  // Load OSINT data on mount
+  useEffect(() => {
+    import('./data/osint-data').then(module => {
+      setOsintData(module.OSINT_DATA);
+    });
+  }, []);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('osint-hub-theme');
+    return saved ? saved === 'dark' : true;
+  });
   const [favorites, setFavorites] = useState(() => {
     const saved = localStorage.getItem('VeriSource-hub-favorites');
     return saved ? JSON.parse(saved) : [];
