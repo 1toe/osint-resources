@@ -38,7 +38,7 @@ export const SearchHistory = ({ history, onClearHistory, onSearchFromHistory, is
                 : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
             }`}
           >
-            <Search className="w-4 h-4 text-osint-500 group-hover:scale-110 transition-transform" />
+            <Search className="w-4 h-4 text-VeriSource-500 group-hover:scale-110 transition-transform" />
             <div className="flex-1 text-left">
               <div className="font-medium truncate">{item.query}</div>
               <div className="text-xs opacity-60">

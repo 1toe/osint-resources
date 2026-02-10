@@ -13,7 +13,7 @@ export default {
         'display': ['Cal Sans', 'Inter', 'sans-serif'],
       },
       colors: {
-        'osint': {
+        'VeriSource': {
           50: '#f0f9ff',
           100: '#e0f2fe',
           200: '#bae6fd',

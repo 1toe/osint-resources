@@ -43,7 +43,7 @@ import {
 import { useLanguage } from './i18n/LanguageContext';
 import { SearchHistory } from './components/SearchHistory';
 
-const OSINT_DATA = [
+const VeriSource_DATA = [
   {
     category: "searchEngines",
     icon: <Search className="w-5 h-5" />,
@@ -124,7 +124,7 @@ const OSINT_DATA = [
       },
       { 
         name: "Instagram Explorer", 
-        url: "https://www.osintcombine.com/free-osint-tools/instagram-explorer", 
+        url: "https://www.VeriSourcecombine.com/free-VeriSource-tools/instagram-explorer", 
         descKey: "instagramExplorer",
         tags: ["instagram", "profiles", "analysis"] 
       },
@@ -136,7 +136,7 @@ const OSINT_DATA = [
       },
       { 
         name: "TikTok Quick Search", 
-        url: "https://www.osintcombine.com/free-osint-tools/tiktok-quick-search", 
+        url: "https://www.VeriSourcecombine.com/free-VeriSource-tools/tiktok-quick-search", 
         descKey: "tiktokSearch",
         tags: ["tiktok", "videos", "search"] 
       },
@@ -399,9 +399,9 @@ const OSINT_DATA = [
         tags: ["fact-check", "debunking", "rumors"] 
       },
       { 
-        name: "OSINT Framework", 
-        url: "https://osintframework.com/", 
-        descKey: "osintframework",
+        name: "VeriSource Framework", 
+        url: "https://VeriSourceframework.com/", 
+        descKey: "VeriSourceframework",
         tags: ["directory", "comprehensive", "tools"] 
       },
       { 
@@ -428,11 +428,11 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [favorites, setFavorites] = useState(() => {
-    const saved = localStorage.getItem('osint-hub-favorites');
+    const saved = localStorage.getItem('VeriSource-hub-favorites');
     return saved ? JSON.parse(saved) : [];
   });
   const [searchHistory, setSearchHistory] = useState(() => {
-    const saved = localStorage.getItem('osint-hub-search-history');
+    const saved = localStorage.getItem('VeriSource-hub-search-history');
     return saved ? JSON.parse(saved) : [];
   });
   const [showFavorites, setShowFavorites] = useState(false);
@@ -452,7 +452,7 @@ export default function App() {
       : [...favorites, tool];
     
     setFavorites(newFavorites);
-    localStorage.setItem('osint-hub-favorites', JSON.stringify(newFavorites));
+    localStorage.setItem('VeriSource-hub-favorites', JSON.stringify(newFavorites));
   };
 
   // Search history management
@@ -465,13 +465,13 @@ export default function App() {
       }, ...searchHistory.filter(h => h.query !== query)].slice(0, 20);
       
       setSearchHistory(newHistory);
-      localStorage.setItem('osint-hub-search-history', JSON.stringify(newHistory));
+      localStorage.setItem('VeriSource-hub-search-history', JSON.stringify(newHistory));
     }
   };
 
   const clearSearchHistory = () => {
     setSearchHistory([]);
-    localStorage.removeItem('osint-hub-search-history');
+    localStorage.removeItem('VeriSource-hub-search-history');
   };
 
   const searchFromHistory = (query) => {
@@ -521,7 +521,7 @@ export default function App() {
 
   // Auto-save theme preference
   useEffect(() => {
-    localStorage.setItem('osint-hub-theme', isDarkMode ? 'dark' : 'light');
+    localStorage.setItem('VeriSource-hub-theme', isDarkMode ? 'dark' : 'light');
     document.documentElement.classList.toggle('dark', isDarkMode);
   }, [isDarkMode]);
 
@@ -580,8 +580,8 @@ export default function App() {
     let systemPrompt = "";
     if (aiMode === "plan") {
       systemPrompt = currentLanguage === 'es' 
-        ? `Eres un investigador OSINT experto. Basándote en la pista proporcionada, genera un plan de investigación paso a paso. Sugiere categorías de herramientas específicas. Sé conciso y profesional. Responde en español.`
-        : `You are an expert OSINT investigator. Based on the lead provided, generate a step-by-step investigation plan. Suggest specific tool categories. Be concise and professional.`;
+        ? `Eres un investigador VeriSource experto. Basándote en la pista proporcionada, genera un plan de investigación paso a paso. Sugiere categorías de herramientas específicas. Sé conciso y profesional. Responde en español.`
+        : `You are an expert VeriSource investigator. Based on the lead provided, generate a step-by-step investigation plan. Suggest specific tool categories. Be concise and professional.`;
     } else {
       systemPrompt = currentLanguage === 'es'
         ? `Eres un especialista en Google Dorking. Convierte la solicitud en lenguaje natural del usuario en una cadena de Google Dork válida. Proporciona el Dork claramente, seguido de una breve explicación. Responde en español.`
@@ -591,7 +591,7 @@ export default function App() {
   };
 
   const filteredData = useMemo(() => {
-    let results = OSINT_DATA;
+    let results = VeriSource_DATA;
     
     // Show only favorites if in favorites view
     if (showFavorites) {
@@ -624,7 +624,7 @@ export default function App() {
     return results;
   }, [searchQuery, activeCategory, t, showFavorites, showHistory, isAiActive, favorites]);
 
-  const categories = ["all", ...OSINT_DATA.map(c => c.category)];
+  const categories = ["all", ...VeriSource_DATA.map(c => c.category)];
 
   // Tag color mapping
   const getTagColor = (tag) => {
@@ -785,21 +785,21 @@ export default function App() {
     input: isDarkMode ? 'bg-slate-900/80 border-slate-700 text-slate-100 placeholder:text-slate-500' : 'bg-white border-slate-300 text-slate-900 placeholder:text-slate-500',
     header: isDarkMode ? 'bg-slate-900/95 border-slate-800/50 backdrop-blur-md' : 'bg-white/95 border-slate-200 backdrop-blur-md',
     aiBox: isDarkMode ? 'bg-slate-950/80 border-slate-800/50' : 'bg-slate-50/80 border-slate-200',
-    accent: 'from-osint-600 to-osint-500'
+    accent: 'from-VeriSource-600 to-VeriSource-500'
   };
 
   return (
-    <div className={`min-h-screen ${theme.bg} ${theme.textMain} font-sans selection:bg-osint-500/30 transition-all duration-500`}>
+    <div className={`min-h-screen ${theme.bg} ${theme.textMain} font-sans selection:bg-VeriSource-500/30 transition-all duration-500`}>
       {/* Header with improved styling */}
       <header className={`flex items-center justify-between p-3 sm:p-4 sticky top-0 z-50 ${theme.header} border-b lg:px-8`}>
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Shield className="w-6 sm:w-7 h-6 sm:h-7 text-osint-500 animate-pulse" />
-            <div className="absolute -inset-1 bg-gradient-to-r from-osint-500/20 to-transparent rounded-full animate-ping"></div>
+            <Shield className="w-6 sm:w-7 h-6 sm:h-7 text-VeriSource-500 animate-pulse" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-VeriSource-500/20 to-transparent rounded-full animate-ping"></div>
           </div>
           <div>
             <h1 className="font-bold text-lg sm:text-xl tracking-tight">
-              {t('header.title')} <span className="text-osint-500 font-display">HUB</span>
+              {t('header.title')} <span className="text-VeriSource-500 font-display">HUB</span>
             </h1>
             <p className={`text-xs ${theme.textSub} hidden sm:block`}>{t('header.subtitle')}</p>
           </div>
@@ -818,7 +818,7 @@ export default function App() {
                 <button
                   key={lang}
                   onClick={() => changeLanguage(lang)}
-                  className={`w-full px-4 py-2 text-left text-sm transition-colors ${currentLanguage === lang ? 'text-osint-500 font-semibold' : theme.textSub} hover:bg-slate-100 dark:hover:bg-slate-800`}
+                  className={`w-full px-4 py-2 text-left text-sm transition-colors ${currentLanguage === lang ? 'text-VeriSource-500 font-semibold' : theme.textSub} hover:bg-slate-100 dark:hover:bg-slate-800`}
                 >
                   {lang.toUpperCase()}
                 </button>
@@ -857,7 +857,7 @@ export default function App() {
                 {t('nav.categories')}
               </p>
               {categories.map((cat) => {
-                const categoryData = OSINT_DATA.find(d => d.category === cat);
+                const categoryData = VeriSource_DATA.find(d => d.category === cat);
                 const isActive = !isAiActive && !showFavorites && !showHistory && activeCategory === cat;
                 
                 return (
@@ -872,7 +872,7 @@ export default function App() {
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 mb-2 group
                       ${isActive
-                        ? 'bg-gradient-to-r from-osint-600 to-osint-500 text-white shadow-lg shadow-osint-500/25 scale-[1.02]' 
+                        ? 'bg-gradient-to-r from-VeriSource-600 to-VeriSource-500 text-white shadow-lg shadow-VeriSource-500/25 scale-[1.02]' 
                         : isDarkMode 
                           ? 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-100' 
                           : 'text-slate-600 hover:bg-slate-100/70 hover:text-slate-900'
@@ -895,7 +895,7 @@ export default function App() {
             <div className={`mt-6 p-4 rounded-xl border ${isDarkMode ? 'bg-slate-800/30 border-slate-800/50' : 'bg-slate-50/50 border-slate-200'}`}>
               <div className="flex items-center justify-between text-xs">
                 <span className={theme.textSub}>{t('search.results')}</span>
-                <span className="font-mono text-osint-500">
+                <span className="font-mono text-VeriSource-500">
                   {filteredData.reduce((acc, curr) => acc + curr.items.length, 0)}
                 </span>
               </div>
@@ -958,7 +958,7 @@ export default function App() {
                             href={item.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`p-2 rounded-lg transition-all hover:scale-110 ${isDarkMode ? 'text-slate-600 hover:text-osint-400' : 'text-slate-300 hover:text-osint-600'}`}
+                            className={`p-2 rounded-lg transition-all hover:scale-110 ${isDarkMode ? 'text-slate-600 hover:text-VeriSource-400' : 'text-slate-300 hover:text-VeriSource-600'}`}
                           >
                             <ExternalLink className="w-4 h-4" />
                           </a>
@@ -1006,12 +1006,12 @@ export default function App() {
               <div className="max-w-4xl mx-auto mb-12">
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                    <Search className={`h-5 w-5 transition-colors ${isDarkMode ? 'text-slate-500 group-focus-within:text-osint-400' : 'text-slate-400 group-focus-within:text-osint-600'}`} />
+                    <Search className={`h-5 w-5 transition-colors ${isDarkMode ? 'text-slate-500 group-focus-within:text-VeriSource-400' : 'text-slate-400 group-focus-within:text-VeriSource-600'}`} />
                   </div>
                   <input
                     type="text"
                     placeholder={t('search.placeholder')}
-                    className={`block w-full pl-12 pr-20 py-4 rounded-2xl border transition-all outline-none focus:ring-2 focus:ring-osint-500/30 text-lg ${theme.input} ${isDarkMode ? 'focus:border-osint-500 shadow-lg shadow-slate-900/10' : 'focus:border-osint-400 shadow-lg shadow-slate-200/20'}`}
+                    className={`block w-full pl-12 pr-20 py-4 rounded-2xl border transition-all outline-none focus:ring-2 focus:ring-VeriSource-500/30 text-lg ${theme.input} ${isDarkMode ? 'focus:border-VeriSource-500 shadow-lg shadow-slate-900/10' : 'focus:border-VeriSource-400 shadow-lg shadow-slate-200/20'}`}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -1056,12 +1056,12 @@ export default function App() {
                           return (
                             <div
                               key={idx}
-                              className={`group relative p-6 rounded-2xl border transition-all duration-300 card-hover backdrop-blur-sm ${theme.card} hover:border-osint-500/40 hover:shadow-xl hover:shadow-osint-500/5`}
+                              className={`group relative p-6 rounded-2xl border transition-all duration-300 card-hover backdrop-blur-sm ${theme.card} hover:border-VeriSource-500/40 hover:shadow-xl hover:shadow-VeriSource-500/5`}
                               style={{ animationDelay: `${(categoryIndex * 100) + (idx * 50)}ms` }}
                             >
                               <div className="flex justify-between items-start mb-4">
                                 <div className="flex-1 min-w-0">
-                                  <h3 className={`font-semibold transition-colors truncate pr-4 text-lg ${isDarkMode ? 'text-slate-100 group-hover:text-white' : 'text-slate-800 group-hover:text-osint-600'}`}>
+                                  <h3 className={`font-semibold transition-colors truncate pr-4 text-lg ${isDarkMode ? 'text-slate-100 group-hover:text-white' : 'text-slate-800 group-hover:text-VeriSource-600'}`}>
                                     {item.name}
                                   </h3>
                                   <div className="flex items-center gap-2 mt-2">
@@ -1086,7 +1086,7 @@ export default function App() {
                                     href={item.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className={`p-2 rounded-lg transition-all hover:scale-110 ${isDarkMode ? 'text-slate-600 hover:text-osint-400' : 'text-slate-300 hover:text-osint-600'}`}
+                                    className={`p-2 rounded-lg transition-all hover:scale-110 ${isDarkMode ? 'text-slate-600 hover:text-VeriSource-400' : 'text-slate-300 hover:text-VeriSource-600'}`}
                                   >
                                     <ExternalLink className="w-4 h-4" />
                                   </a>
@@ -1097,7 +1097,7 @@ export default function App() {
                               </p>
                               
                               {/* Subtle hover effect */}
-                              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-osint-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-VeriSource-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                             </div>
                           );
                         })}
@@ -1111,7 +1111,7 @@ export default function App() {
                     <p className={`${theme.textSub} mb-6`}>{t('search.noResultsDesc')}</p>
                     <button 
                       onClick={() => setSearchQuery("")}
-                      className="px-6 py-2 bg-osint-500 text-white rounded-lg hover:bg-osint-600 transition-colors"
+                      className="px-6 py-2 bg-VeriSource-500 text-white rounded-lg hover:bg-VeriSource-600 transition-colors"
                     >
                       Limpiar búsqueda
                     </button>

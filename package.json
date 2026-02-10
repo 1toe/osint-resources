@@ -1,8 +1,8 @@
 {
-  "name": "osint-hub",
+  "name": "VeriSource-hub",
   "private": true,
   "version": "1.0.0",
-  "description": "Hub completo de recursos OSINT con IA integrada",
+  "description": "Hub completo de recursos VeriSource con IA integrada",
   "type": "module",
   "scripts": {
     "dev": "vite",

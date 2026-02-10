@@ -7,7 +7,7 @@ export const ExportTools = ({ favorites, searchHistory, isDarkMode }) => {
   
   const exportFavorites = () => {
     const data = {
-      type: 'osint-hub-favorites',
+      type: 'VeriSource-hub-favorites',
       version: '1.0',
       exportDate: new Date().toISOString(),
       favorites: favorites,
@@ -21,7 +21,7 @@ export const ExportTools = ({ favorites, searchHistory, isDarkMode }) => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `osint-hub-favorites-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `VeriSource-hub-favorites-${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -37,14 +37,14 @@ export const ExportTools = ({ favorites, searchHistory, isDarkMode }) => {
     
     if (navigator.share) {
       navigator.share({
-        title: 'Mi configuración de OSINT Hub',
-        text: `Tengo ${favorites.length} herramientas favoritas en OSINT Hub`,
+        title: 'Mi configuración de VeriSource',
+        text: `Tengo ${favorites.length} herramientas favoritas en VeriSource`,
         url: window.location.href
       });
     } else {
       // Fallback: copiar al clipboard
       navigator.clipboard.writeText(
-        `🕵️ Mi setup de OSINT Hub:\n- ${favorites.length} herramientas favoritas\n- Tema: ${isDarkMode ? 'Oscuro' : 'Claro'}\n\n${window.location.href}`
+        `🕵️ Mi setup de VeriSource:\n- ${favorites.length} herramientas favoritas\n- Tema: ${isDarkMode ? 'Oscuro' : 'Claro'}\n\n${window.location.href}`
       );
     }
   };
@@ -56,9 +56,9 @@ export const ExportTools = ({ favorites, searchHistory, isDarkMode }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <button
           onClick={exportFavorites}
-          className="flex items-center gap-3 p-4 rounded-xl border border-osint-500/20 hover:bg-osint-500/10 transition-all group"
+          className="flex items-center gap-3 p-4 rounded-xl border border-VeriSource-500/20 hover:bg-VeriSource-500/10 transition-all group"
         >
-          <Download className="w-5 h-5 text-osint-500 group-hover:scale-110 transition-transform" />
+          <Download className="w-5 h-5 text-VeriSource-500 group-hover:scale-110 transition-transform" />
           <div className="text-left">
             <div className="font-medium">Exportar Favoritos</div>
             <div className="text-sm opacity-70">{favorites.length} herramientas</div>
@@ -67,9 +67,9 @@ export const ExportTools = ({ favorites, searchHistory, isDarkMode }) => {
         
         <button
           onClick={shareConfig}
-          className="flex items-center gap-3 p-4 rounded-xl border border-osint-500/20 hover:bg-osint-500/10 transition-all group"
+          className="flex items-center gap-3 p-4 rounded-xl border border-VeriSource-500/20 hover:bg-VeriSource-500/10 transition-all group"
         >
-          <Share2 className="w-5 h-5 text-osint-500 group-hover:scale-110 transition-transform" />
+          <Share2 className="w-5 h-5 text-VeriSource-500 group-hover:scale-110 transition-transform" />
           <div className="text-left">
             <div className="font-medium">Compartir Setup</div>
             <div className="text-sm opacity-70">Configuración actual</div>
