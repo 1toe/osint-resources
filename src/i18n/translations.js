@@ -90,6 +90,7 @@ export const translations = {
       haveibeenpwned: "Verificar filtraciones de datos",
       pipl: "Búsqueda global de personas",
       thatsthem: "Herramientas de búsqueda inversa",
+      idcrawl: "Búsqueda inversa de personas",
       
       // Image & Mapping
       tineye: "Búsqueda inversa de imágenes",
@@ -145,7 +146,8 @@ export const translations = {
       back: "Volver",
       next: "Siguiente",
       previous: "Anterior"
-    }
+    },
+
   },
   
   en: {
@@ -239,6 +241,7 @@ export const translations = {
       haveibeenpwned: "Check data breaches",
       pipl: "Global people search",
       thatsthem: "Reverse lookup tools",
+      idcrawl: "Reverse people search",
       
       // Image & Mapping
       tineye: "Reverse image search",
@@ -294,6 +297,6 @@ export const translations = {
       back: "Back",
       next: "Next",
       previous: "Previous"
-    }
+    },
   }
 };

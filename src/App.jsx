@@ -18,7 +18,6 @@ import {
   ChevronRight,
   Menu,
   X,
-  BookOpen,
   Anchor,
   Cloud,
   CheckCircle,
@@ -38,14 +37,10 @@ import {
   Eye,
   Compass,
   Target,
-  Settings,
   History,
-  Presentation,
-  Keyboard,
   Heart
 } from 'lucide-react';
 import { useLanguage } from './i18n/LanguageContext';
-import { ExportTools } from './components/ExportTools';
 import { SearchHistory } from './components/SearchHistory';
 
 const OSINT_DATA = [
@@ -206,11 +201,17 @@ const OSINT_DATA = [
         descKey: "pipl",
         tags: ["people", "global", "deep-web"] 
       },
-      { 
-        name: "ThatsThem", 
-        url: "https://thatsthem.com/people-search", 
+      {
+        name: "ThatsThem",
+        url: "https://thatsthem.com/people-search",
         descKey: "thatsthem",
-        tags: ["reverse", "phone", "address"] 
+        tags: ["reverse", "phone", "address"]
+      },
+      {
+        name: "IDCrawl",
+        url: "https://www.idcrawl.com/",
+        descKey: "idcrawl",
+        tags: ["people", "reverse", "search"]
       }
     ]
   },
@@ -434,10 +435,8 @@ export default function App() {
     const saved = localStorage.getItem('osint-hub-search-history');
     return saved ? JSON.parse(saved) : [];
   });
-  const [showSettings, setShowSettings] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
-  const [presentationMode, setPresentationMode] = useState(false);
   
   // Gemini AI States
   const [isAiActive, setIsAiActive] = useState(false);
@@ -492,7 +491,6 @@ export default function App() {
       
       // Escape para cerrar modales
       if (e.key === 'Escape') {
-        setShowSettings(false);
         setShowFavorites(false);
         setShowHistory(false);
         setIsSidebarOpen(false);
@@ -510,12 +508,6 @@ export default function App() {
         setShowHistory(!showHistory);
       }
 
-      // Ctrl/Cmd + Shift + P para modo presentación
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'P') {
-        e.preventDefault();
-        setPresentationMode(!presentationMode);
-      }
-
       // Ctrl/Cmd + Shift + D para cambiar tema
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'D') {
         e.preventDefault();
@@ -525,7 +517,7 @@ export default function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showFavorites, showHistory, presentationMode, isDarkMode]);
+  }, [showFavorites, showHistory, isDarkMode]);
 
   // Auto-save theme preference
   useEffect(() => {
@@ -609,7 +601,7 @@ export default function App() {
       })).filter(cat => cat.items.length > 0);
     }
     
-    if (activeCategory !== "all") {
+    if (!showFavorites && !showHistory && !isAiActive && activeCategory !== "all") {
       results = results.filter(cat => cat.category === activeCategory);
     }
     if (searchQuery) {
@@ -630,9 +622,158 @@ export default function App() {
       }
     }
     return results;
-  }, [searchQuery, activeCategory, t, showFavorites, favorites]);
+  }, [searchQuery, activeCategory, t, showFavorites, showHistory, isAiActive, favorites]);
 
   const categories = ["all", ...OSINT_DATA.map(c => c.category)];
+
+  // Tag color mapping
+  const getTagColor = (tag) => {
+    const colorMap = {
+      // Search engines
+      'general': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'popular': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'worldwide': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      'advanced': 'bg-blue-600/20 text-blue-300 border border-blue-600/30',
+      'filters': 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30',
+      'precise': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'security': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'dorks': 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
+      'vulnerabilities': 'bg-red-600/20 text-red-300 border border-red-600/30',
+      'microsoft': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'alternative': 'bg-gray-500/20 text-gray-400 border border-gray-500/30',
+      'images': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'russia': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'cyrillic': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'regional': 'bg-amber-500/20 text-amber-400 border border-amber-500/30',
+      'china': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'chinese': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'privacy': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'anonymous': 'bg-green-600/20 text-green-300 border border-green-600/30',
+      'no-tracking': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'google-proxy': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      // Social Media
+      'twitter': 'bg-sky-500/20 text-sky-400 border border-sky-500/30',
+      'analytics': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      'statistics': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'bots': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'automation': 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
+      'detection': 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30',
+      'archive': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'deleted': 'bg-gray-500/20 text-gray-400 border border-gray-500/30',
+      'history': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'instagram': 'bg-pink-500/20 text-pink-400 border border-pink-500/30',
+      'profiles': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'analysis': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      'viewer': 'bg-pink-500/20 text-pink-400 border border-pink-500/30',
+      'anonymous': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'tiktok': 'bg-black/30 text-white border border-slate-500/30',
+      'videos': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'search': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      'telegram': 'bg-sky-500/20 text-sky-400 border border-sky-500/30',
+      'channels': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'facebook': 'bg-blue-600/20 text-blue-300 border border-blue-600/30',
+      'filters': 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30',
+      // Person Search
+      'email': 'bg-amber-500/20 text-amber-400 border border-amber-500/30',
+      'validation': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'reputation': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'gmail': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'google': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'accounts': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'finder': 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
+      'business': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'username': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'social': 'bg-pink-500/20 text-pink-400 border border-pink-500/30',
+      'availability': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'comprehensive': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      'platforms': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'breach': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'passwords': 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
+      'people': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'global': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'deep-web': 'bg-slate-500/20 text-slate-400 border border-slate-500/30',
+      'reverse': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      'phone': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'address': 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
+      // Image & Mapping
+      'image': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'face': 'bg-pink-500/20 text-pink-400 border border-pink-500/30',
+      'recognition': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'ai': 'bg-violet-500/20 text-violet-400 border border-violet-500/30',
+      'geolocation': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'shadow': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'time': 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30',
+      'metadata': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      'forensics': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'streetview': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'comparison': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'maps': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'satellite': 'bg-blue-600/20 text-blue-300 border border-blue-600/30',
+      'weather': 'bg-cyan-600/20 text-cyan-300 border border-cyan-600/30',
+      'live': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'mountains': 'bg-amber-500/20 text-amber-400 border border-amber-500/30',
+      'geography': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'identification': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      // Corporate & Tech
+      'companies': 'bg-slate-500/20 text-slate-400 border border-slate-500/30',
+      'corporate': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'database': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      'panama-papers': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'offshore': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'financial': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'technology': 'bg-blue-600/20 text-blue-300 border border-blue-600/30',
+      'stack': 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
+      'website': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      'url': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'domain': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'infrastructure': 'bg-orange-600/20 text-orange-300 border border-orange-600/30',
+      'dns': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'encoding': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'decoding': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      // Transport & Live
+      'ships': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'maritime': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      'tracking': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'flights': 'bg-sky-500/20 text-sky-400 border border-sky-500/30',
+      'aircraft': 'bg-blue-600/20 text-blue-300 border border-blue-600/30',
+      'railway': 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
+      'trains': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'radio': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'scanner': 'bg-red-600/20 text-red-300 border border-red-600/30',
+      'emergency': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'webcams': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      // AI
+      'openai': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'language': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'assistant': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'multimodal': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      'anthropic': 'bg-purple-600/20 text-purple-300 border border-purple-600/30',
+      'helpful': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'harmless': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'research': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      'papers': 'bg-blue-600/20 text-blue-300 border border-blue-600/30',
+      'scientific': 'bg-green-600/20 text-green-300 border border-green-600/30',
+      'humanizer': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'bypass': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      // Verification & Blogs
+      'journalism': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'investigation': 'bg-red-500/20 text-red-400 border border-red-500/30',
+      'verification': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'fact-check': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+      'debunking': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'rumors': 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
+      'directory': 'bg-blue-600/20 text-blue-300 border border-blue-600/30',
+      'tools': 'bg-slate-500/20 text-slate-400 border border-slate-500/30',
+      'michael-bazzell': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'methods': 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
+      'training': 'bg-green-500/20 text-green-400 border border-green-500/30',
+      'weekly': 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+      'blog': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+      'updates': 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+    };
+
+    return colorMap[tag] || 'bg-slate-700/40 text-slate-300 border border-slate-600/30';
+  };
 
   // Theme colors - More organic and warm
   const theme = {
@@ -650,14 +791,14 @@ export default function App() {
   return (
     <div className={`min-h-screen ${theme.bg} ${theme.textMain} font-sans selection:bg-osint-500/30 transition-all duration-500`}>
       {/* Header with improved styling */}
-      <header className={`flex items-center justify-between p-4 sticky top-0 z-50 ${theme.header} border-b lg:px-8`}>
+      <header className={`flex items-center justify-between p-3 sm:p-4 sticky top-0 z-50 ${theme.header} border-b lg:px-8`}>
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Shield className="w-7 h-7 text-osint-500 animate-pulse" />
+            <Shield className="w-6 sm:w-7 h-6 sm:h-7 text-osint-500 animate-pulse" />
             <div className="absolute -inset-1 bg-gradient-to-r from-osint-500/20 to-transparent rounded-full animate-ping"></div>
           </div>
           <div>
-            <h1 className="font-bold text-xl tracking-tight">
+            <h1 className="font-bold text-lg sm:text-xl tracking-tight">
               {t('header.title')} <span className="text-osint-500 font-display">HUB</span>
             </h1>
             <p className={`text-xs ${theme.textSub} hidden sm:block`}>{t('header.subtitle')}</p>
@@ -666,11 +807,11 @@ export default function App() {
         
         <div className="flex items-center gap-2 lg:gap-4">
           {/* Language Selector */}
-          <div className="relative group">
-            <button 
-              className={`p-2.5 rounded-xl transition-all ${isDarkMode ? 'bg-slate-800/70 hover:bg-slate-700 text-slate-300' : 'bg-slate-100 hover:bg-slate-200 text-slate-600'} group-hover:scale-105`}
+          <div className="relative group hidden sm:block">
+            <button
+              className={`p-2 sm:p-2.5 rounded-xl transition-all ${isDarkMode ? 'bg-slate-800/70 hover:bg-slate-700 text-slate-300' : 'bg-slate-100 hover:bg-slate-200 text-slate-600'} group-hover:scale-105`}
             >
-              <Languages className="w-5 h-5" />
+              <Languages className="w-4 sm:w-5 h-4 sm:h-5" />
             </button>
             <div className={`absolute right-0 top-full mt-2 w-32 py-2 rounded-xl border shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all ${theme.sidebar}`}>
               {availableLanguages.map(lang => (
@@ -686,18 +827,18 @@ export default function App() {
           </div>
           
           {/* Theme Toggle */}
-          <button 
+          <button
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className={`p-2.5 rounded-xl transition-all hover:scale-105 ${isDarkMode ? 'bg-slate-800/70 text-yellow-400 hover:bg-slate-700' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+            className={`p-2 sm:p-2.5 rounded-xl transition-all hover:scale-105 ${isDarkMode ? 'bg-slate-800/70 text-yellow-400 hover:bg-slate-700' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
             title={isDarkMode ? t('header.lightMode') : t('header.darkMode')}
           >
-            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            {isDarkMode ? <Sun className="w-4 sm:w-5 h-4 sm:h-5" /> : <Moon className="w-4 sm:w-5 h-4 sm:h-5" />}
           </button>
           
           {/* Mobile Menu */}
-          <button 
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
-            className={`lg:hidden p-2.5 rounded-xl transition-all hover:scale-105 ${isDarkMode ? 'bg-slate-800/70 hover:bg-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className={`lg:hidden p-2 sm:p-2.5 rounded-xl transition-all hover:scale-105 ${isDarkMode ? 'bg-slate-800/70 hover:bg-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}
           >
             {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -707,7 +848,7 @@ export default function App() {
       <div className="flex">
         {/* Enhanced Sidebar */}
         <aside className={`
-          fixed lg:sticky top-0 lg:top-[73px] left-0 z-40 h-[calc(100vh-73px)] w-72 ${theme.sidebar} border-r transition-all duration-300
+          fixed lg:sticky top-0 lg:top-[73px] left-0 z-40 h-[calc(100vh-73px)] w-full sm:w-80 lg:w-72 ${theme.sidebar} border-r transition-all duration-300
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}>
           <nav className="px-4 py-6 overflow-y-auto h-full custom-scrollbar">
@@ -717,7 +858,7 @@ export default function App() {
               </p>
               {categories.map((cat) => {
                 const categoryData = OSINT_DATA.find(d => d.category === cat);
-                const isActive = !isAiActive && activeCategory === cat;
+                const isActive = !isAiActive && !showFavorites && !showHistory && activeCategory === cat;
                 
                 return (
                   <button
@@ -725,7 +866,9 @@ export default function App() {
                     onClick={() => { 
                       setActiveCategory(cat); 
                       setIsSidebarOpen(false); 
-                      setIsAiActive(false); 
+                      setIsAiActive(false);
+                      setShowFavorites(false);
+                      setShowHistory(false);
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 mb-2 group
                       ${isActive
@@ -746,75 +889,6 @@ export default function App() {
               })}
             </div>
 
-            <div className={`pt-6 border-t ${isDarkMode ? 'border-slate-800/50' : 'border-slate-200/50'}`}>
-              <button
-                onClick={() => { setShowFavorites(!showFavorites); setIsAiActive(false); setIsSidebarOpen(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 mb-2 group
-                  ${showFavorites 
-                    ? 'bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg shadow-pink-500/25 scale-[1.02]' 
-                    : isDarkMode 
-                      ? 'text-slate-400 hover:bg-pink-600/10 hover:text-pink-300 border border-transparent hover:border-pink-500/20' 
-                      : 'text-slate-600 hover:bg-pink-50 hover:text-pink-700 border border-transparent hover:border-pink-200'
-                  }
-                `}
-              >
-                <div className={`p-1.5 rounded-lg transition-colors ${showFavorites ? 'bg-white/20' : 'bg-pink-500/10'}`}>
-                  <Heart className="w-4 h-4" />
-                </div>
-                ⭐ {t('nav.favorites')} ({favorites.length})
-              </button>
-
-              <button
-                onClick={() => { setShowHistory(!showHistory); setIsAiActive(false); setIsSidebarOpen(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 mb-2 group
-                  ${showHistory 
-                    ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25 scale-[1.02]' 
-                    : isDarkMode 
-                      ? 'text-slate-400 hover:bg-amber-600/10 hover:text-amber-300 border border-transparent hover:border-amber-500/20' 
-                      : 'text-slate-600 hover:bg-amber-50 hover:text-amber-700 border border-transparent hover:border-amber-200'
-                  }
-                `}
-              >
-                <div className={`p-1.5 rounded-lg transition-colors ${showHistory ? 'bg-white/20' : 'bg-amber-500/10'}`}>
-                  <History className="w-4 h-4" />
-                </div>
-                📜 Historial ({searchHistory.length})
-              </button>
-
-              <button
-                onClick={() => { setIsAiActive(true); setIsSidebarOpen(false); setShowFavorites(false); setShowHistory(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 mb-2 group
-                  ${isAiActive 
-                    ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/25 scale-[1.02]' 
-                    : isDarkMode 
-                      ? 'text-slate-400 hover:bg-gradient-to-r hover:from-violet-600/10 hover:to-purple-600/10 hover:text-violet-300 border border-transparent hover:border-violet-500/20' 
-                      : 'text-slate-600 hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50 hover:text-violet-700 border border-transparent hover:border-violet-200'
-                  }
-                `}
-              >
-                <div className={`p-1.5 rounded-lg transition-colors ${isAiActive ? 'bg-white/20' : 'bg-violet-500/10'}`}>
-                  <Sparkles className="w-4 h-4" />
-                </div>
-                ✨ {t('ai.title')}
-                {!isAiActive && <div className="ml-auto w-2 h-2 rounded-full bg-violet-500 animate-pulse"></div>}
-              </button>
-
-              <button
-                onClick={() => { setShowSettings(!showSettings); setIsSidebarOpen(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 mb-2 group
-                  ${showSettings 
-                    ? 'bg-gradient-to-r from-slate-600 to-slate-700 text-white shadow-lg' 
-                    : isDarkMode 
-                      ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-100' 
-                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                  }
-                `}
-              >
-                <div className={`p-1.5 rounded-lg transition-colors ${showSettings ? 'bg-white/20' : 'bg-slate-500/10'}`}>
-                  <Settings className="w-4 h-4" />
-                </div>
-                ⚙️ {t('nav.settings')}
-              </button>
             </div>
 
             {/* Stats */}
@@ -830,7 +904,7 @@ export default function App() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 min-w-0 p-4 lg:p-8">
+        <main className="flex-1 min-w-0 p-3 sm:p-6 lg:p-8">
           {showFavorites ? (
             /* Favorites View */
             <div className="max-w-4xl mx-auto animate-fade-in">
@@ -926,84 +1000,6 @@ export default function App() {
                 isDarkMode={isDarkMode}
               />
             </div>
-          ) : showSettings ? (
-            /* Settings View */
-            <div className="max-w-4xl mx-auto animate-fade-in">
-              <div className="mb-8 flex items-center justify-between">
-                <div>
-                  <h2 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-                    ⚙️ {t('nav.settings')}
-                  </h2>
-                  <p className={theme.textSub}>
-                    Configuración y herramientas de exportación
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowSettings(false)}
-                  className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              
-              <div className="space-y-8">
-                <ExportTools 
-                  favorites={favorites}
-                  searchHistory={searchHistory}
-                  isDarkMode={isDarkMode}
-                />
-                
-                {/* Keyboard Shortcuts */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <Keyboard className="w-5 h-5" />
-                    Atajos de Teclado
-                  </h3>
-                  <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 p-6 rounded-xl border ${theme.card}`}>
-                    {[
-                      { keys: ['Ctrl/Cmd', 'K'], desc: 'Enfocar búsqueda' },
-                      { keys: ['Ctrl/Cmd', 'Shift', 'F'], desc: 'Ver favoritos' },
-                      { keys: ['Ctrl/Cmd', 'Shift', 'H'], desc: 'Ver historial' },
-                      { keys: ['Ctrl/Cmd', 'Shift', 'D'], desc: 'Cambiar tema' },
-                      { keys: ['Escape'], desc: 'Cerrar modales' }
-                    ].map((shortcut, i) => (
-                      <div key={i} className="flex items-center justify-between">
-                        <span className="text-sm">{shortcut.desc}</span>
-                        <div className="flex gap-1">
-                          {shortcut.keys.map(key => (
-                            <kbd key={key} className={`px-2 py-1 text-xs font-mono rounded border ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-100 border-slate-300'}`}>
-                              {key}
-                            </kbd>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Presentation Mode */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <Presentation className="w-5 h-5" />
-                    Modo Presentación
-                  </h3>
-                  <button
-                    onClick={() => setPresentationMode(!presentationMode)}
-                    className={`flex items-center gap-3 p-4 rounded-xl border transition-all ${presentationMode ? 'border-osint-500 bg-osint-500/10' : 'border-slate-300 dark:border-slate-700 hover:border-osint-500/50'}`}
-                  >
-                    <Presentation className="w-5 h-5 text-osint-500" />
-                    <div className="text-left">
-                      <div className="font-medium">
-                        {presentationMode ? 'Desactivar' : 'Activar'} Modo Presentación
-                      </div>
-                      <div className="text-sm opacity-70">
-                        Interfaz limpia para demostraciones
-                      </div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </div>
           ) : !isAiActive ? (
             <div className="animate-fade-in">
               {/* Enhanced Search Bar */}
@@ -1053,7 +1049,7 @@ export default function App() {
                         <div className={`h-px flex-1 ml-6 hidden md:block bg-gradient-to-r ${category.color} opacity-30`}></div>
                       </div>
                       
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                         {category.items.map((item, idx) => {
                           const isFavorite = favorites.some(f => f.url === item.url);
                           
@@ -1070,7 +1066,7 @@ export default function App() {
                                   </h3>
                                   <div className="flex items-center gap-2 mt-2">
                                     {item.tags.slice(0, 2).map(tag => (
-                                      <span key={tag} className={`px-2 py-1 rounded-md text-xs font-mono ${isDarkMode ? 'bg-slate-800/60 text-slate-400' : 'bg-slate-100 text-slate-600'}`}>
+                                      <span key={tag} className={`px-2 py-1 rounded-md text-xs font-medium transition-colors ${getTagColor(tag)}`}>
                                         {tag}
                                       </span>
                                     ))}
@@ -1084,7 +1080,7 @@ export default function App() {
                                     }}
                                     className={`p-2 rounded-lg transition-all hover:scale-110 ${isFavorite ? 'text-yellow-500 hover:text-yellow-400' : 'text-slate-400 hover:text-yellow-500'}`}
                                   >
-                                    {isFavorite ? <Star className="w-4 h-4 fill-current" /> : <StarOff className="w-4 h-4" />}
+                                    {isFavorite ? <Star className="w-4 h-4 fill-current" /> : <Star className="w-4 h-4" />}
                                   </button>
                                   <a
                                     href={item.url}
