@@ -889,8 +889,6 @@ export default function App() {
               })}
             </div>
 
-            </div>
-
             {/* Stats */}
             <div className={`mt-6 p-4 rounded-xl border ${isDarkMode ? 'bg-slate-800/30 border-slate-800/50' : 'bg-slate-50/50 border-slate-200'}`}>
               <div className="flex items-center justify-between text-xs">
