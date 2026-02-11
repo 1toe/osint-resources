@@ -17,26 +17,20 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
-    minify: 'terser',
+    minify: 'esbuild',
     target: 'esnext',
     cssMinify: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Vendor libs
-          'react-vendor': ['react', 'react-dom'],
-          // Component chunks
-          'ui-components': ['./src/components/ExportTools.jsx', './src/components/SearchHistory.jsx'],
-          // Data chunks
-          'app-data': ['./src/data/osint-data.js', './src/i18n/translations.js'],
-          // Utilities
-          'utils': ['./src/utils/preload.js', './src/i18n/LanguageContext.jsx']
+        manualChunks: (id) => {
+          if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/')) {
+            return 'react-vendor'
+          }
+          if (id.includes('node_modules/lucide-react')) {
+            return 'icons'
+          }
         },
-        // Optimize chunk names for better caching
-        chunkFileNames: (chunkInfo) => {
-          return `chunks/[name]-[hash].js`
-        },
-        // Optimize asset names
+        chunkFileNames: 'chunks/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name.split('.')
           const ext = info[info.length - 1]
@@ -53,38 +47,9 @@ export default defineConfig({
         }
       }
     },
-    // Terser optimizations
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug'],
-        passes: 2
-      },
-      mangle: {
-        safari10: true
-      },
-      format: {
-        comments: false
-      }
-    },
-    // Enable gzip compression
     reportCompressedSize: false
   },
-  // Optimize dependencies
   optimizeDeps: {
     include: ['react', 'react-dom'],
-    // Exclude large deps that should be loaded on-demand
-    exclude: []
   },
-  // Enable experimental features for better performance
-  experimental: {
-    renderBuiltUrl(filename, { hostType }) {
-      if (hostType === 'js') {
-        return { js: `/${filename}` }
-      } else {
-        return { css: `/${filename}` }
-      }
-    }
-  }
 })

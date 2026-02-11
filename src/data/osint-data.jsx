@@ -1,19 +1,21 @@
 // OSINT Tools Data - Lazy loaded to reduce initial bundle size
-import Search from 'lucide-react/dist/esm/icons/search';
-import MessageSquare from 'lucide-react/dist/esm/icons/message-square';
-import User from 'lucide-react/dist/esm/icons/user';
-import Globe from 'lucide-react/dist/esm/icons/globe';
-import Shield from 'lucide-react/dist/esm/icons/shield';
-import Map from 'lucide-react/dist/esm/icons/map';
-import ImageIcon from 'lucide-react/dist/esm/icons/image';
-import Database from 'lucide-react/dist/esm/icons/database';
-import Camera from 'lucide-react/dist/esm/icons/camera';
-import Activity from 'lucide-react/dist/esm/icons/activity';
-import Briefcase from 'lucide-react/dist/esm/icons/briefcase';
-import Lock from 'lucide-react/dist/esm/icons/lock';
-import Cpu from 'lucide-react/dist/esm/icons/cpu';
-import FileText from 'lucide-react/dist/esm/icons/file-text';
-import CheckCircle from 'lucide-react/dist/esm/icons/check-circle';
+import {
+  Search,
+  MessageSquare,
+  User,
+  Globe,
+  Shield,
+  Map,
+  Image as ImageIcon,
+  Database,
+  Camera,
+  Activity,
+  Briefcase,
+  Lock,
+  Cpu,
+  FileText,
+  CheckCircle
+} from 'lucide-react';
 
 export const OSINT_DATA = [
   {

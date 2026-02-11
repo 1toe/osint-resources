@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { translations } from './translations';
 
 const LanguageContext = createContext();
@@ -17,7 +17,7 @@ export const LanguageProvider = ({ children }) => {
   useEffect(() => {
     // Detectar idioma del navegador
     const browserLang = navigator.language.split('-')[0];
-    const storedLang = localStorage.getItem('osint-hub-language');
+    const storedLang = localStorage.getItem('VeriSource-hub-language');
     
     if (storedLang && translations[storedLang]) {
       setCurrentLanguage(storedLang);
@@ -31,7 +31,7 @@ export const LanguageProvider = ({ children }) => {
   const changeLanguage = (lang) => {
     if (translations[lang]) {
       setCurrentLanguage(lang);
-      localStorage.setItem('osint-hub-language', lang);
+      localStorage.setItem('VeriSource-hub-language', lang);
       
       // Actualizar el HTML lang attribute
       document.documentElement.lang = lang;

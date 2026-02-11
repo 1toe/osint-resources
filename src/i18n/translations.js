@@ -11,7 +11,7 @@ export const translations = {
     
     // Header
     header: {
-      title: "OSINT HUB",
+      title: "VeriSource",
       subtitle: "Recursos de Inteligencia Digital",
       darkMode: "Cambiar a modo oscuro",
       lightMode: "Cambiar a modo claro",
@@ -43,7 +43,7 @@ export const translations = {
     
     // AI Assistant
     ai: {
-      title: "OSINT AI Suite",
+      title: "VeriSource AI Suite",
       subtitle: "Planifica investigaciones y genera dorks automáticamente con Gemini.",
       investigatorPlan: "Plan de Investigación",
       dorkGenerator: "Generador de Dorks",
@@ -75,7 +75,7 @@ export const translations = {
       twitonomy: "Análisis de Twitter",
       botSentinel: "Rastrear actividad de bots",
       waybackTweets: "Tweets archivados",
-      instagramExplorer: "Herramienta IG de OSINT Combine",
+      instagramExplorer: "Herramienta IG de VeriSource Combine",
       picuki: "Editor y visor de Instagram",
       tiktokSearch: "Investigaciones de TikTok",
       telegago: "Búsqueda de Telegram",
@@ -90,6 +90,7 @@ export const translations = {
       haveibeenpwned: "Verificar filtraciones de datos",
       pipl: "Búsqueda global de personas",
       thatsthem: "Herramientas de búsqueda inversa",
+      idcrawl: "Búsqueda inversa de personas",
       
       // Image & Mapping
       tineye: "Búsqueda inversa de imágenes",
@@ -125,9 +126,9 @@ export const translations = {
       // Verification & Blogs
       bellingcat: "Periodismo de investigación",
       snopes: "Recurso de verificación de hechos",
-      osintframework: "Directorio completo de herramientas",
+      VeriSourceframework: "Directorio completo de herramientas",
       inteltechniques: "Recursos de Michael Bazzell",
-      sector035: "Blog Semana en OSINT"
+      sector035: "Blog Semana en VeriSource"
     },
     
     // Common
@@ -145,7 +146,8 @@ export const translations = {
       back: "Volver",
       next: "Siguiente",
       previous: "Anterior"
-    }
+    },
+
   },
   
   en: {
@@ -160,7 +162,7 @@ export const translations = {
     
     // Header
     header: {
-      title: "OSINT HUB",
+      title: "VeriSource",
       subtitle: "Digital Intelligence Resources",
       darkMode: "Switch to dark mode",
       lightMode: "Switch to light mode", 
@@ -192,7 +194,7 @@ export const translations = {
     
     // AI Assistant
     ai: {
-      title: "OSINT AI Suite",
+      title: "VeriSource AI Suite",
       subtitle: "Plan investigations and generate dorks automatically with Gemini.",
       investigatorPlan: "Investigator Plan",
       dorkGenerator: "Dork Generator",
@@ -224,7 +226,7 @@ export const translations = {
       twitonomy: "Twitter analytics",
       botSentinel: "Track bot activity",
       waybackTweets: "Archived tweets",
-      instagramExplorer: "OSINT Combine IG tool",
+      instagramExplorer: "VeriSource Combine IG tool",
       picuki: "Instagram editor & viewer",
       tiktokSearch: "TikTok investigations",
       telegago: "Telegram search",
@@ -239,6 +241,7 @@ export const translations = {
       haveibeenpwned: "Check data breaches",
       pipl: "Global people search",
       thatsthem: "Reverse lookup tools",
+      idcrawl: "Reverse people search",
       
       // Image & Mapping
       tineye: "Reverse image search",
@@ -274,9 +277,9 @@ export const translations = {
       // Verification & Blogs
       bellingcat: "Investigative journalism",
       snopes: "Fact-checking resource",
-      osintframework: "Comprehensive tool directory",
+      VeriSourceframework: "Comprehensive tool directory",
       inteltechniques: "Michael Bazzell's resources",
-      sector035: "Week in OSINT blog"
+      sector035: "Week in VeriSource blog"
     },
     
     // Common
@@ -294,6 +297,6 @@ export const translations = {
       back: "Back",
       next: "Next",
       previous: "Previous"
-    }
+    },
   }
 };

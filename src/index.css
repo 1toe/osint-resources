@@ -146,12 +146,12 @@ body {
 
 /* Focus styles */
 .focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-osint-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800;
+  @apply focus:outline-none focus:ring-2 focus:ring-VeriSource-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800;
 }
 
 /* Button styles */
 .btn-primary {
-  @apply bg-gradient-to-r from-osint-600 to-osint-500 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 hover:from-osint-700 hover:to-osint-600 focus-ring shadow-lg hover:shadow-xl;
+  @apply bg-gradient-to-r from-VeriSource-600 to-VeriSource-500 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 hover:from-VeriSource-700 hover:to-VeriSource-600 focus-ring shadow-lg hover:shadow-xl;
 }
 
 .btn-secondary {
